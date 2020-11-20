@@ -139,7 +139,7 @@ export class ConsentRequest implements OnInit {
 					"hiData": hiData
 				}
 			}
-			this.router.navigateByUrl('./medical-records', navigationExtras)
+			this.router.navigateByUrl('/medical-records', navigationExtras)
 		}).catch((error) => { return error })
 
 	}
