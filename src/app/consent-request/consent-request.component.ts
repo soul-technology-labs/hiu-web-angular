@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, NavigationExtras } from '@angular/router';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -8,6 +9,8 @@ import { MatCardModule } from '@angular/material/card';
 import SoulHIU from '@soul-technology-labs/soul-hiu-js'
 const soulClient = new SoulHIU({ apiKey: "", basePath: "http://13.233.129.208:5000/api/v1" })
 const healthId = "vikram@sbx"
+const fromDate = "2020-10-20T00:40:35.705Z"
+const toDate = "2020-11-16T23:40:35.705Z"
 
 @Component({ selector: 'app', templateUrl: './consent-request.component.html', styleUrls: ['./consent-request.component.css'] })
 
@@ -17,7 +20,7 @@ export class ConsentRequest implements OnInit {
 	Data: Array<any> = [
 		{ name: 'Prescription', value: 'Prescription' },
 		{ name: 'Diagnostic Report', value: 'DiagnosticReport' },
-		{ name: 'OP Consultation', value: 'Observation' },
+		{ name: 'OP Consultation', value: 'OPConsultation' },
 		{ name: 'Discharge Summary', value: 'DischargeSummary' }
 	];
 	purposeList = ['Care Management', 'Break the Glass',
@@ -27,9 +30,11 @@ export class ConsentRequest implements OnInit {
 	consentColumns: string[] = ['position', 'requestId', 'status', 'refresh', 'data'];
 	dataSource: Array<any>
 	dataColumns: string[] = ['position', 'requestId', 'status', 'refresh', 'data'];
+	fromDate: string
+	toDate: string
 
 
-	constructor(private formBuilder: FormBuilder, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+	constructor(private formBuilder: FormBuilder, private router: Router, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
 		iconRegistry.addSvgIcon(
 			'refresh',
 			sanitizer.bypassSecurityTrustResourceUrl('../../assets/images/refresh-24px.svg'));
@@ -46,8 +51,8 @@ export class ConsentRequest implements OnInit {
 
 		});
 
-		this.consentList(healthId)
-		this.dataRequests(healthId)
+		this.refreshConsent()
+		this.refreshData()
 	}
 
 	// convenience getter for easy access to form fields
@@ -80,9 +85,10 @@ export class ConsentRequest implements OnInit {
 
 		soulClient.consentInit(this.form.value).then((response) => {
 			console.log(response)
-			this.consentList(healthId)
+
+			this.refreshConsent()
 			// display form values on success
-			alert('SUCCESS!! :-)\n\n' + JSON.stringify(response, null, 4));
+			//alert('SUCCESS!! :-)\n\n' + JSON.stringify(response, null, 4));
 		})
 	}
 
@@ -91,25 +97,50 @@ export class ConsentRequest implements OnInit {
 		this.form.reset();
 	}
 
+	refreshConsent() {
+		this.consentList(healthId)
+
+	}
+
+	refreshData() {
+		this.dataRequestList(healthId)
+	}
+
 	consentList(healthId) {
 		soulClient.consentList(healthId).then((response) => {
-			console.log(response)
+			console.log(JSON.stringify(response))
 			return this.consentSource = response
 		}).catch((error) => { return error })
-	}
+	} e
 
 	dataInit(requestId) {
-		soulClient.dataInit(requestId).then((response) => {
-			console.log(response)
-			this.dataRequests(healthId)
+		soulClient.consentStatus(requestId).then((response) => {
+			console.log("Consent Status: " + JSON.stringify(response[0].consentArtefactId[2]))
+			soulClient.dataInit(response[0].consentArtefactId[2].id, fromDate, toDate).then((response) => {
+				console.log(response)
+				this.refreshData()
+			}).catch((error) => { return error })
 		}).catch((error) => { return error })
-
 	}
 
-	dataRequests(healthId) {
+	dataRequestList(healthId) {
 		soulClient.dataRequestList(healthId).then((response) => {
 			console.log(response)
 			return this.dataSource = response.data
 		}).catch((error) => { return error })
 	}
-}
+
+	viewRecords(requestId) {
+		soulClient.dataFetch(requestId).then((hiData) => {
+			console.log(JSON.stringify(hiData))
+			const navigationExtras: NavigationExtras = {
+
+				queryParams: {
+					"hiData": hiData
+				}
+			}
+			this.router.navigateByUrl('./medical-records', navigationExtras)
+		}).catch((error) => { return error })
+
+	}
+} 

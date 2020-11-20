@@ -109,7 +109,7 @@
             svgIcon="refresh"
             aria-hidden="false"
             aria-label="refresh"
-            (click)="action($event)"
+            (click)="refreshConsent()"
           ></mat-icon>
         </td>
       </ng-container>
@@ -122,7 +122,7 @@
             class="btn btn-primary mr-1"
             (click)="dataInit(row.requestId)"
           >
-            Request
+            Request Data
           </button>
         </td>
       </ng-container>
@@ -155,7 +155,7 @@
 
       <!-- Status Column -->
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Consent status</th>
+        <th mat-header-cell *matHeaderCellDef>Data status</th>
         <td mat-cell *matCellDef="let element">{{ element.status }}</td>
       </ng-container>
 
@@ -166,7 +166,7 @@
             svgIcon="refresh"
             aria-hidden="false"
             aria-label="refresh"
-            (click)="action($event)"
+            (click)="refreshData()"
           ></mat-icon>
         </td>
       </ng-container>
@@ -175,10 +175,11 @@
         <th mat-header-cell *matHeaderCellDef>PHR</th>
         <td mat-cell *matCellDef="let row">
           <button
-            [disabled]="row.status !== 'Granted'"
+            [disabled]="row.status !== 'ready to fetch'"
             class="btn btn-primary mr-1"
+            (click)="viewRecords(row.requestId)"
           >
-            Fetch
+            View Records
           </button>
         </td>
       </ng-container>
