@@ -17,4 +17,9 @@ RUN npm run build --prod
 
 FROM nginx:1.17.1-alpine
 
+## Remove default Nginx website
+RUN rm -rf /usr/share/nginx/html/*
+
+COPY ./nginx.conf /etc/nginx/nginx.conf
+
 COPY --from=build-step /app/dist/hiu-web-angular /usr/share/nginx/html
