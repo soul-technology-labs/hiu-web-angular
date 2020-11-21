@@ -115,8 +115,8 @@ export class ConsentRequest implements OnInit {
 
 	dataInit(requestId) {
 		soulClient.consentStatus(requestId).then((response) => {
-			console.log("Consent Status: " + JSON.stringify(response[0].consentArtefactId[2]))
-			soulClient.dataInit(response[0].consentArtefactId[2].id, fromDate, toDate).then((response) => {
+			console.log("Consent Status: " + JSON.stringify(response[0].consentArtefactId[0]))
+			soulClient.dataInit(response[0].consentArtefactId[0].id, fromDate, toDate).then((response) => {
 				console.log(response)
 				this.refreshData()
 			}).catch((error) => { return error })
