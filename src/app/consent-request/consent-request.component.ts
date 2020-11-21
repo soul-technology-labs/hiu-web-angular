@@ -7,7 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
 
 import SoulHIU from '@soul-technology-labs/soul-hiu-js'
-const soulClient = new SoulHIU({ apiKey: "", basePath: "http://13.233.129.208:5000/api/v1" })
+const soulClient = new SoulHIU({ apiKey: "", basePath: "https://demohrp.soul.technology/api/v1" })
 const healthId = "vikram@sbx"
 const fromDate = "2020-10-20T00:40:35.705Z"
 const toDate = "2020-11-16T23:40:35.705Z"
