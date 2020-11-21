@@ -132,14 +132,9 @@ export class ConsentRequest implements OnInit {
 
 	viewRecords(requestId) {
 		soulClient.dataFetch(requestId).then((hiData) => {
-			console.log(JSON.stringify(hiData))
-			const navigationExtras: NavigationExtras = {
+			//console.log(JSON.stringify(hiData))
 
-				queryParams: {
-					"hiData": hiData
-				}
-			}
-			this.router.navigateByUrl('/medical-records', navigationExtras)
+			this.router.navigate(['medical-records'], { state: { hiData: hiData.records[0].data } })
 		}).catch((error) => { return error })
 
 	}
